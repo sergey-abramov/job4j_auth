@@ -1,6 +1,8 @@
 package ru.job4j.service;
 
 import lombok.AllArgsConstructor;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Person;
@@ -13,14 +15,24 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PersonService {
 
+    private static final Logger LOG = LogManager.getLogger(PersonService.class.getName());
     private final PersonRepository repository;
 
     public Optional<Person> save(Person person) {
         try {
             return Optional.of(repository.save(person));
         } catch (ConstraintViolationException e) {
-            return Optional.empty();
+            LOG.error("Проверьте введенные данные");
         }
+        return Optional.empty();
+    }
+
+    public boolean update(Person person) {
+        if (findById(person.getId()).isPresent()) {
+            repository.save(person);
+            return true;
+        }
+        return false;
     }
 
     public Optional<Person> findById(int id) {
@@ -32,7 +44,10 @@ public class PersonService {
     }
 
     public boolean delete(int id) {
-        repository.deleteById(id);
-        return findById(id).isEmpty();
+        if (findById(id).isPresent()) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
