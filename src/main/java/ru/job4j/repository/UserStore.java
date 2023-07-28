@@ -1,7 +1,6 @@
 package ru.job4j.repository;
 
 import org.springframework.stereotype.Component;
-import ru.job4j.model.Person;
 import ru.job4j.model.User;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ public class UserStore {
     public void save(User user) {
         users.put(user.getUsername(), user);
     }
-
 
     public User findByUsername(String username) {
         return users.get(username);

@@ -18,7 +18,6 @@ import ru.job4j.service.UserService;
 
 import static ru.job4j.filter.JWTAuthenticationFilter.SIGN_UP_URL;
 
-
 @EnableWebSecurity
 @AllArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
