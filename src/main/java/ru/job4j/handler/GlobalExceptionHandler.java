@@ -17,7 +17,8 @@ import java.util.HashMap;
 @AllArgsConstructor
 public class GlobalExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class.getSimpleName());
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(GlobalExceptionHandler.class.getSimpleName());
 
     private final ObjectMapper objectMapper;
 
@@ -32,6 +33,5 @@ public class GlobalExceptionHandler {
         }}));
         LOGGER.error(e.getMessage());
     }
-
 
 }

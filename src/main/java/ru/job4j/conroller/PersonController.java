@@ -23,7 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PersonController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class.getSimpleName());
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(PersonController.class.getSimpleName());
 
     private final ObjectMapper objectMapper;
 
