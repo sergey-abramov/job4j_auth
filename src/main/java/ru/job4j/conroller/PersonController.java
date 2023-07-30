@@ -83,6 +83,4 @@ public class PersonController {
         }}));
         LOGGER.error(e.getMessage());
     }
-
-
 }
