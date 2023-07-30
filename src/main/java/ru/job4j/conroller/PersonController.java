@@ -78,7 +78,7 @@ public class PersonController {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() { {
-            put("message", "Some of fields empty");
+            put("message", "A user with the same name already exists");
             put("details", e.getMessage());
         }}));
         LOGGER.error(e.getMessage());
