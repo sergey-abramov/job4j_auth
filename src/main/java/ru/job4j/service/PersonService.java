@@ -2,6 +2,10 @@ package ru.job4j.service;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Person;
 import ru.job4j.repository.PersonRepository;
@@ -9,9 +13,11 @@ import ru.job4j.repository.PersonRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+
 @Service
 @AllArgsConstructor
-public class PersonService {
+public class PersonService implements UserDetailsService {
 
     private final PersonRepository repository;
 
@@ -34,6 +40,14 @@ public class PersonService {
 
     public Optional<Person> findById(int id) {
         return repository.findById(id);
+    }
+
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        var person = repository.findByLogin(login);
+        if (person == null) {
+            throw new UsernameNotFoundException(login);
+        }
+        return new User(person.getLogin(), person.getPassword(), emptyList());
     }
 
     public List<Person> findAll() {

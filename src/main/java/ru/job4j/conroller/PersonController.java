@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Person;
@@ -30,7 +31,9 @@ public class PersonController {
 
     private final PersonService persons;
 
-    @GetMapping("/")
+    private BCryptPasswordEncoder encoder;
+
+    @GetMapping("/all")
     public List<Person> findAll() {
         return persons.findAll();
     }
@@ -43,9 +46,10 @@ public class PersonController {
         ));
     }
 
-    @PostMapping("/")
+    @PostMapping("/sign-up")
     public Person create(@RequestBody Person person) {
-        var optionalPerson = persons.save(person);
+        person.setPassword(encoder.encode(person.getPassword()));
+        persons.save(person);
         return person;
     }
 
@@ -79,4 +83,6 @@ public class PersonController {
         }}));
         LOGGER.error(e.getMessage());
     }
+
+
 }
