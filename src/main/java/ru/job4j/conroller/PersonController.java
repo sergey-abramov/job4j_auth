@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Person;
 import ru.job4j.service.PersonService;
 
@@ -39,18 +38,17 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public Person findById(@PathVariable int id) {
-        return persons.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Person is not found."
-        ));
+    public ResponseEntity<Person> findById(@PathVariable int id) {
+        return ResponseEntity.ok(persons.findById(id).get());
     }
 
     @PostMapping("/sign-up")
-    public Person create(@RequestBody Person person) {
+    public ResponseEntity<Void> create(@RequestBody Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
-        persons.save(person);
-        return person;
+        if (persons.save(person).isPresent()) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/")

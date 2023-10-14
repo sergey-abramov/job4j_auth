@@ -23,12 +23,9 @@ import static ru.job4j.filter.JWTAuthenticationFilter.SIGN_UP_URL;
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private PersonService service;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -41,6 +38,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+    @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(service).passwordEncoder(bCryptPasswordEncoder);
     }
