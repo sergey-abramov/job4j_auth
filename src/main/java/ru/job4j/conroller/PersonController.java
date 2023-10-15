@@ -9,12 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Person;
 import ru.job4j.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,6 +60,19 @@ public class PersonController {
         }
         if (persons.update(person)) {
            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<Void> updateReflection(@RequestBody Person person)
+            throws InvocationTargetException, IllegalAccessException {
+        var optionalPerson = persons.findById(person.getId());
+        if (optionalPerson.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (persons.updateByReflection(optionalPerson.get(), person).isPresent()) {
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
