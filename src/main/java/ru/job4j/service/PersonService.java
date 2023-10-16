@@ -2,19 +2,15 @@ package ru.job4j.service;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import ru.job4j.dto.PersonDTO;
 import ru.job4j.model.Person;
 import ru.job4j.repository.PersonRepository;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,32 +39,12 @@ public class PersonService implements UserDetailsService {
         return false;
     }
 
-    public Optional<Person> updateByReflection(Person current, Person person)
-            throws InvocationTargetException, IllegalAccessException {
-        var methods = current.getClass().getDeclaredMethods();
-        var namePerMethod = new HashMap<String, Method>();
-        for (var method: methods) {
-            var name = method.getName();
-            if (name.startsWith("get") || name.startsWith("set")) {
-                namePerMethod.put(name, method);
-            }
-        }
-        for (var name : namePerMethod.keySet()) {
-            if (name.startsWith("get")) {
-                var getMethod = namePerMethod.get(name);
-                var setMethod = namePerMethod.get(name.replace("get", "set"));
-                if (setMethod == null) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                            String.format("""
-                                    Impossible invoke set method from object :
-                                    %s, Check set and get pairs.
-                                    """, current));
-                }
-                var newValue = getMethod.invoke(person);
-                if (newValue != null) {
-                    setMethod.invoke(current, newValue);
-                }
-            }
+    public Optional<Person> updatePassword(PersonDTO person) {
+        var currentOptional = repository.findById(person.getId());
+        Person current = new Person();
+        if (currentOptional.isPresent()) {
+            current = currentOptional.get();
+            current.setPassword(person.getPassword());
         }
         return Optional.of(repository.save(current));
     }
