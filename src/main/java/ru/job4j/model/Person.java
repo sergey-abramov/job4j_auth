@@ -22,7 +22,7 @@ public class Person {
     @NotNull(message = "Id must be non null", groups = {
             Operation.OnUpdate.class, Operation.OnDelete.class
     })
-    private int id;
+    private Integer id;
     @NotBlank(message = "Login must be not empty")
     private String login;
     @NotBlank(message = "Password must be not empty")
