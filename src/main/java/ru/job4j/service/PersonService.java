@@ -43,14 +43,16 @@ public class PersonService implements UserDetailsService {
         return false;
     }
 
-    public Optional<Person> updatePassword(PersonDTO personDto) {
+    public boolean updatePassword(PersonDTO personDto) {
         var currentOptional = repository.findById(personDto.getId());
-        Person current = new Person();
+        Person current;
         if (currentOptional.isPresent()) {
             current = currentOptional.get();
             current.setPassword(encoder.encode(personDto.getPassword()));
+            repository.save(current);
+            return true;
         }
-        return Optional.of(repository.save(current));
+        return false;
     }
 
     public Optional<Person> findById(int id) {

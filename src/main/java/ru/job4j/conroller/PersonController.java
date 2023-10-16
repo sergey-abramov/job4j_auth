@@ -65,7 +65,7 @@ public class PersonController {
 
     @PatchMapping("/updatePassword")
     public ResponseEntity<Void> updatePassword(@RequestBody PersonDTO person) {
-        if (persons.updatePassword(person).isPresent()) {
+        if (persons.updatePassword(person)) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
