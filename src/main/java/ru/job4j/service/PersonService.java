@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.job4j.dto.PersonDTO;
 import ru.job4j.model.Person;
@@ -22,7 +23,10 @@ public class PersonService implements UserDetailsService {
 
     private final PersonRepository repository;
 
+    private BCryptPasswordEncoder encoder;
+
     public Optional<Person> save(Person person) {
+        person.setPassword(encoder.encode(person.getPassword()));
         try {
             return Optional.of(repository.save(person));
         } catch (ConstraintViolationException e) {
@@ -39,12 +43,12 @@ public class PersonService implements UserDetailsService {
         return false;
     }
 
-    public Optional<Person> updatePassword(PersonDTO person) {
-        var currentOptional = repository.findById(person.getId());
+    public Optional<Person> updatePassword(PersonDTO personDto) {
+        var currentOptional = repository.findById(personDto.getId());
         Person current = new Person();
         if (currentOptional.isPresent()) {
             current = currentOptional.get();
-            current.setPassword(person.getPassword());
+            current.setPassword(encoder.encode(personDto.getPassword()));
         }
         return Optional.of(repository.save(current));
     }

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.dto.PersonDTO;
@@ -34,8 +33,6 @@ public class PersonController {
 
     private final PersonService persons;
 
-    private BCryptPasswordEncoder encoder;
-
     @GetMapping("/all")
     public List<Person> findAll() {
         return persons.findAll();
@@ -49,7 +46,6 @@ public class PersonController {
     @PostMapping("/sign-up")
     @Validated(Operation.OnCreate.class)
     public ResponseEntity<Void> create(@Valid @RequestBody Person person) {
-        person.setPassword(encoder.encode(person.getPassword()));
         if (persons.save(person).isPresent()) {
             return ResponseEntity.ok().build();
         }
